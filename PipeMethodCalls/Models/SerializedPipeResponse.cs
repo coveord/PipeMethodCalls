@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PipeMethodCalls.Models;
 
 namespace PipeMethodCalls
 {
@@ -37,13 +38,18 @@ namespace PipeMethodCalls
 		/// </summary>
 		public string Error { get; private set; }
 
-		/// <summary>
-		/// Creates a new success pipe response.
-		/// </summary>
-		/// <param name="callId">The ID of the call.</param>
-		/// <param name="data">The returned data.</param>
-		/// <returns>The success pipe response.</returns>
-		public static SerializedPipeResponse Success(long callId, byte[] data)
+        /// <summary>
+        /// The exception details. Valid if Succeeded is false.
+        /// </summary>
+		public PipeException Exception { get; private set; }
+
+	    /// <summary>
+	    /// Creates a new success pipe response.
+	    /// </summary>
+	    /// <param name="callId">The ID of the call.</param>
+	    /// <param name="data">The returned data.</param>
+	    /// <returns>The success pipe response.</returns>
+	    public static SerializedPipeResponse Success(long callId, byte[] data)
 		{
 			return new SerializedPipeResponse { Succeeded = true, CallId = callId, Data = data };
 		}
@@ -58,5 +64,17 @@ namespace PipeMethodCalls
 		{
 			return new SerializedPipeResponse { Succeeded = false, CallId = callId, Error = message };
 		}
+
+		/// <summary>
+		/// Creates a new failure pipe response.
+		/// </summary>
+		/// <param name="callId">The ID of the call.</param>
+		/// <param name="message">The failure message.</param>
+		/// <param name="exception">The failure message.</param>
+		/// <returns>The failure pipe response.</returns>
+		public static SerializedPipeResponse Failure(long callId, string message, Exception exception)
+        {
+            return new SerializedPipeResponse { Succeeded = false, CallId = callId, Error = message, Exception = PipeException.Failure(exception.InnerException) };
+        }
 	}
 }

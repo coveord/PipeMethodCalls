@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
+using PipeMethodCalls.Models;
 
 namespace PipeMethodCalls
 {
@@ -29,6 +29,11 @@ namespace PipeMethodCalls
 		/// </summary>
 		public string Error { get; private set; }
 
+        /// <summary>
+        /// The exception details. Valid if Succeeded is false.
+        /// </summary>
+        public PipeException Exception { get; private set; }
+
 		/// <summary>
 		/// Creates a new success pipe response.
 		/// </summary>
@@ -50,6 +55,18 @@ namespace PipeMethodCalls
 		{
 			return new TypedPipeResponse { Succeeded = false, CallId = callId, Error = message };
 		}
+
+		/// <summary>
+		/// Creates a new failure pipe response.
+		/// </summary>
+		/// <param name="callId">The ID of the call.</param>
+		/// <param name="message">The failure message.</param>
+		/// <param name="exception">The failure exception.</param>
+		/// <returns>The failure pipe response.</returns>
+		public static TypedPipeResponse Failure(long callId, string message, Exception exception)
+        {
+            return new TypedPipeResponse { Succeeded = false, CallId = callId, Error = message, Exception = PipeException.Failure(exception.InnerException) };
+        }
 
 		/// <summary>
 		/// Gets a string representation of this typed response.
@@ -74,7 +91,14 @@ namespace PipeMethodCalls
 			{
 				builder.Append("  Error: ");
 				builder.Append(this.Error);
-			}
+
+                if (Exception != null)
+                {
+                    builder.Append("  Exception: ");
+                    builder.Append(this.Exception.ExceptionMessage);
+                    builder.Append(this.Exception.ExceptionStack);
+				}
+            }
 
 			return builder.ToString();
 		}

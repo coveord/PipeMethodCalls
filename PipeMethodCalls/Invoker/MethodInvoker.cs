@@ -189,7 +189,7 @@ namespace PipeMethodCalls
 			}
 		}
 
-		private void ThrowCoveoException(PipeResponse response)
+		private void ThrowCoveoException(SerializedPipeResponse response)
 		{
 			if (response.Exception != null
 				&& !string.IsNullOrEmpty(response.Exception.ExceptionType)
@@ -209,7 +209,7 @@ namespace PipeMethodCalls
 			}
 		}
 
-		private void ThrowGenericException(PipeResponse response)
+		private void ThrowGenericException(SerializedPipeResponse response)
 		{
 			if (response.Exception != null && !string.IsNullOrEmpty(response.Exception.ExceptionType))
 			{
